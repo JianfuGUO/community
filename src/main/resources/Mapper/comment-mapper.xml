@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--一个mapper.xml文件对应一个具体的mapper接口-->
+<mapper namespace="com.nowcoder.dao.CommentMapper">
+
+    <!--字段复用-->
+    <!--mybatis的<sql> 标签一般是用来封装sql语句、或者复用语句的，然后用<include>标签来调用-->
+    <sql id="selectFields">
+        id,user_id,entity_type,entity_id,target_id,content,status,create_time
+    </sql>
+
+    <!--新增的sql语句相对于查询就差一个主键-->
+    <sql id="insertFields">
+        user_id,entity_type,entity_id,target_id,content,status,create_time
+    </sql>
+
+    <!--查询语句-->
+    <!--返回类型为集合 List<Comment>-->
+    <select id="selectCommentsByEntity" resultType="Comment">
+        select <include refid="selectFields"></include>
+        from comment
+        where status = 0
+        and entity_type = #{entityType}
+        and entity_id = #{entityId}
+        order by create_time asc
+        limit #{offset},#{limit}
+    </select>
+
+    <!--查询总条数-->
+    <select id="selectCountByEntity" resultType="int">
+        select count(id)
+        from comment
+        where status = 0
+        and entity_type = #{entityType}
+        and entity_id = #{entityId}
+    </select>
+
+    <!--新增帖子-->
+    <!--新增的数据类型: parameterType="Comment"-->
+    <insert id="insertComment" parameterType="Comment">
+        insert into comment(<include refid="insertFields"></include>)
+        values(#{userId},#{entityType},#{entityId},#{targetId},#{content},#{status},#{createTime})
+    </insert>
+
+    <!--根据 id 查询一条 comment-->
+    <!--select：表示定义的为查询sql-->
+    <!--id:为mapper接口中的方法名-->
+    <!--resultType为返回值类型，完整应该是com.nowcoder.entity.User，但是在配置文件里面已经设置了实体类所在包：com.nowcoder.entity-->
+    <select id="selectCommentById" resultType="Comment">
+        select <include refid="selectFields"></include>
+        from comment
+        where id = #{id}
+    </select>
+</mapper>

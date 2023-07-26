@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AJAX</title>
+</head>
+<body>
+<P>
+    <input type="button" value="发送" onclick="send();">
+</P>
+
+<!--引入 jQuery-->
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+<script>
+    function send() {
+        $.post(
+            /*访问服务器的路径*/
+            "/community/alpha/ajax",
+            /*向服务器提交的数据*/
+            {"name": "张三", "age": 23},
+            /*回调函数，data 为服务器给浏览器返回的数据(字符串)*/
+            function (data) {
+                console.log(typeof (data));
+                console.log(data);
+
+                // jQuery将字符串转换为 json 对象
+                data = $.parseJSON(data);
+                console.log(typeof (data));
+                console.log(data.code);
+                console.log(data.msg);
+            }
+        )
+    }
+</script>
+</body>
+</html>

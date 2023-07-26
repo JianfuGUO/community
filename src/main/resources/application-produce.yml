@@ -1,0 +1,132 @@
+server:
+  # 配置端口号
+  port: 8080
+  # 配置项目访问的路径
+  servlet:
+#    context-path: /community
+    # 项目部署更改项目访问路径
+    context-path:
+
+spring:
+  # ------------------------------------------------------ #
+  # 关闭 thymeleaf 的缓存
+  # 模板的缓存关掉，开发阶段有缓存时页面的内容即便你改掉，没有刷新看到的还是旧的内容，有一定延时
+  # 系统上线时模板缓存应该开启，有缓存会降低服务器的压力
+  thymeleaf:
+    cache: true
+  # DataSourceProperties mysql数据库和连接池信息
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/community?characterEncoding=utf-8&useSSL=false&serverTimezone=Hongkong&allowPublicKeyRetrieval=true
+    username: root
+    password: Nowcoder_123
+    # 连接池的类型（此类型性能最好）
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      # 连接池最大连接数
+      maximum-pool-size: 15
+      # 最小空闲连接
+      minimum-idle: 5
+      # 超时时间 ms
+      idle-timeout: 30000
+  # ------------------------------------------------------ #
+  # 发送邮箱的配置
+  mail:
+    # 设置邮件服务器
+    host: smtp.163.com
+    # 设置端口
+    port: 465
+    username: guojianfu_seu@163.com
+    # 用授权码来代替密码
+    password: PUFQMYXAPCIGITMW
+    # 协议，安全协议
+    protocol: smtps
+  #---------------------------------------------------------#
+  # 配置 RedisProperties
+  redis:
+    database: 11
+    host: 127.0.0.1
+    port: 6379
+  #---------------------------------------------------------#
+  # kafka 配置
+  kafka:
+    # 配置 server
+    bootstrap-servers: localhost:9092
+    # 消费者组
+    consumer:
+      # 消费者组的 id
+      group-id: community-consumer-group
+      # 是否自动提交
+      enable-auto-commit: true
+      # 自动提交的频率 3000ms即 3 秒
+      auto-commit-interval: 3000
+  #---------------------------------------------------------#
+  # elasticsearch 配置
+  elasticsearch:
+    # elasticsearch 连接地址
+    uris: http://127.0.0.1:9200
+  #---------------------------------------------------------#
+  # Spring 提供的普通线程池，需配置才能使用
+  task:
+    execution:
+      pool:
+        # 核心线程数为 5
+        core-size: 5
+        # 线程不够用时自动扩容，最大 15 个
+        max-size: 15
+        # 队列最大容量（15个还不够用时，将 task 放入到一个队列里面进行缓冲）
+        queue-capacity: 100
+    #------------------------------------------------------#
+    # Spring 提供的能执行定时任务的线程池，需配置才能使用
+    scheduling:
+      pool:
+        size: 5
+#  quartz:
+#    # 底层用jdbc存储
+#    job-store-type: jdbc
+#    # 调度器的名字
+#    scheduler-name: communityScheduler
+#    # 调度器实例编号自动生成
+
+
+
+
+community:
+  path:
+    domain: http://192.168.184.131
+    upload: /tmp/uploads
+
+
+# MybatisProperties
+mybatis:
+  # mapper文件对应的路径
+  mapper-locations: classpath:mapper/*.xml
+  # 实体类所在包（类和表中的数据字段对应）---后面在书写 resultType 不用写这个前缀名
+  type-aliases-package: com.nowcoder.entity
+  configuration:
+    # 启用主键自增长（insert时候 id 自增长）
+    use-generated-keys: true
+    # 下划线和驼峰匹配的方式可以对应起来，例如 head_url和 headUrl
+    map-underscore-to-camel-case: true
+    # 在 application.yml（.properties）中增加配置，在控制台打印 sql,方便调试 mapper.xml 是否书写有问题：
+    # logger日志相关的配置，后续被logback-spring.xml配置文件代替了
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+
+# MailProperties
+
+# 配置 RedisProperties
+
+# 配置 KafkaProperties
+
+# 配置 Elasticsearch
+# 集群名称
+
+# Spring 提供的普通线程池，需配置才能使用
+# TaskExecutionProperties
+
+# Spring 提供的能执行定时任务的线程池，需配置才能使用
+# TaskSchedulingProperties
+
+# QuartzProperties
+# 配置好后 quartz 才能将数据存储到数据库中

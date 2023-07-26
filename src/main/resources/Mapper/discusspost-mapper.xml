@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--一个mapper.xml文件对应一个具体的mapper接口-->
+<mapper namespace="com.nowcoder.dao.DiscussPostMapper">
+
+    <!--mybatis的<sql> 标签一般是用来封装sql语句、或者复用语句的，然后用<include>标签来调用-->
+    <sql id="selectFields">
+        id,user_id,title,content,type,status,create_time,comment_count,score
+    </sql>
+
+    <!--insert的字段，一般就比查询的字段少一个主键自增id-->
+    <sql id="insertFields">
+        user_id,title,content,type,status,create_time,comment_count,score
+    </sql>
+
+
+    <!--selectDiscussPosts为mapper接口里面的方法名-->
+    <!--resultType为sql语句查询结果的返回值类型-->
+    <!--<if></if>标签为动态的sql语句，test="要判断的条件"-->
+    <select id="selectDiscussPosts" resultType="DiscussPost">
+        select
+        <include refid="selectFields"></include>
+        from discuss_post
+        where status !=2
+        <if test="userId!=0">
+            and user_id = #{userId}
+        </if>
+        <!--根据orderMode的值来调整：-->
+        <!--orderMode为0，则按照原来的方式进行排序-->
+        <!--orderMode为1，则按照热度的方式进行排序-->
+        <if test="orderMode==0">
+            order by type desc,create_time desc
+        </if>
+        <if test="orderMode==1">
+            order by type desc, score desc, create_time desc
+        </if>
+        limit #{offset},#{limit}
+    </select>
+
+    <select id="selectDiscussPostRow" resultType="int">
+        select count(id)
+        from discuss_post
+        where status !=2
+        <if test="userId!=0">
+            and user_id = #{userId}
+        </if>
+    </select>
+
+    <!--parameterType 为方法参数的类型-->
+    <insert id="insertDiscussPost" parameterType="DiscussPost" keyProperty="id">
+        insert into discuss_post(<include refid="insertFields"></include>)
+        values(#{userId},#{title},#{content},#{type},#{status},#{createTime},#{commentCount},#{score})
+    </insert>
+
+    <!--id为Mapper里面定义的方法名-->
+    <!--parameterType 为方法参数的类型-->
+    <select id="selectDiscussPostById" resultType="DiscussPost">
+        select
+        <include refid="selectFields"></include>
+        from discuss_post
+        where id = #{id}
+    </select>
+
+    <!--修改评论的数量-->
+    <!--返回值类型为 int 其实可以忽略-->
+    <update id="updateCommentCount" parameterType="int">
+        update discuss_post set comment_count = #{commentCount} where id = #{id}
+    </update>
+
+    <!--update SQL语句-->
+    <!--更改帖子类型-->
+    <!--置顶操作，修改帖子Type-->
+    <update id="updateType">
+        update discuss_post set type = #{type} where id = #{id}
+    </update>
+
+    <!--更改帖子状态-->
+    <!--加精、删除操作，修改帖子的status-->
+    <update id="updateStatus">
+        update discuss_post set status = #{status} where id = #{id}
+    </update>
+
+    <!--更改帖子分数-->
+    <!--热帖排行中修改帖子的score-->
+    <update id="updateScore">
+        update discuss_post set score = #{score} where id = #{id}
+    </update>
+
+</mapper>

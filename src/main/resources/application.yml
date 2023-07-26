@@ -1,0 +1,8 @@
+# 多环境开发启用那一套配置文件
+# 开发版配置关键词：develop(以此为结尾的)
+# 上线版配置关键词：produce
+# profile
+#spring:
+#  profiles:
+#    active: produce
+
